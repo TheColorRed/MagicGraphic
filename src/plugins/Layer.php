@@ -39,16 +39,12 @@ class Layer{
      */
     protected function createGraphic($image){
         if(is_string($image)){
-            $im     = imagecreatefromstring($image);
-            $width  = imagesx($im);
-            $height = imagesy($im);
+            $im = $this->_createFromString($image);
         }elseif(is_resource($image)){
             $width  = imagesx($image);
             $height = imagesy($image);
-            $im = $this->_createFromSoruce($image, $width, $height);
+            $im     = $this->_createFromSoruce($image, $width, $height);
         }
-        $this->width  = $width;
-        $this->height = $height;
         return $im;
     }
 
@@ -111,11 +107,9 @@ class Layer{
      * @param integer $height
      */
     public function resize($width, $height){
-        $origw        = $this->width;
-        $origh        = $this->height;
-        $this->width  = (int)$width;
-        $this->height = (int)$height;
-        $this->_resize($origw, $origh, $this->width, $this->height);
+        $origw = $this->width;
+        $origh = $this->height;
+        $this->_resize($origw, $origh, $width, $height);
     }
 
     /**
@@ -123,11 +117,11 @@ class Layer{
      * @param integer $width
      */
     public function autoResizeWidth($width){
-        $origw        = $this->width;
-        $origh        = $this->height;
-        $this->width  = (int)$width;
-        $this->height = (int)round($origh * ($width / $origw));
-        $this->_resize($origw, $origh, $this->width, $this->height);
+        $origw  = $this->width;
+        $origh  = $this->height;
+        $width  = (int)$width;
+        $height = (int)round($origh * ($width / $origw));
+        $this->_resize($origw, $origh, $width, $height);
     }
 
     /**
@@ -135,11 +129,24 @@ class Layer{
      * @param integer $height
      */
     public function autoResizeHeight($height){
-        $origw        = $this->width;
-        $origh        = $this->height;
-        $this->width  = (int)round($origw * ($height / $origh));
-        $this->height = (int)$height;
-        $this->_resize($origw, $origh, $this->width, $this->height);
+        $origw  = $this->width;
+        $origh  = $this->height;
+        $width  = (int)round($origw * ($height / $origh));
+        $height = (int)$height;
+        $this->_resize($origw, $origh, $width, $height);
+    }
+
+    public function rotate($amount){
+        $amount        = $amount * -1;
+        imagesavealpha($this->graphic, true);
+        $trans_color   = imagecolorallocatealpha($this->graphic, 0, 0, 0, 127);
+        $this->graphic = imagerotate($this->graphic, $amount, $trans_color);
+        $this->recalcSize();
+    }
+
+    public function recalcSize(){
+        $this->width  = imagesx($this->graphic);
+        $this->height = imagesy($this->graphic);
     }
 
     /**
@@ -157,6 +164,7 @@ class Layer{
         imagefill($im, 0, 0, $trans_color);
         imagecopyresampled($im, $this->graphic, 0, 0, 0, 0, $neww, $newh, $origw, $origh);
         $this->graphic = $im;
+        $this->recalcSize();
         return $im;
     }
 
@@ -176,6 +184,19 @@ class Layer{
         imagecopyresampled($im, $image, 0, 0, 0, 0, $width, $height, $width, $height);
 
         $this->graphic = $im;
+        $this->recalcSize();
+        return $im;
+    }
+    
+    /**
+     * Creates an image from a string such as file_get_contents()
+     * @param string $string
+     * @return resource
+     */
+    protected function _createFromString($string){
+        $im = imagecreatefromstring($string);
+        $this->graphic = $im;
+        $this->recalcSize();
         return $im;
     }
 

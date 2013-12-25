@@ -11,12 +11,13 @@ $sexy->autoResizeWidth(500);
 
 $explosion = $mg->createLayer("expl1");
 $explosion->loadFromFile("images/explosion.png");
-$explosion->autoResizeWidth(100);
+$explosion->autoResizeWidth(150);
 $explosion->setOffset(100, 315);
 
 $explosion2 = $mg->duplicateLayer("expl2", $explosion->getData());
 $explosion2->setOffset(220, 350);
+$explosion2->rotate(45);
 
 //$explosion2 = $mg->duplicateLayer("expl1");
 
-$mg->display(MagicGraphic::PNG);
+$mg->display(MagicGraphic::JPG);
