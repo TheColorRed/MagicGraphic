@@ -16,6 +16,10 @@ class Layer{
         $this->graphic = $this->createGraphic($image);
     }
 
+    /**
+     * This loads an image from an existing resource.
+     * @param resource $resource
+     */
     public function loadFromResource($resource){
         $this->graphic = $this->createGraphic($resource);
     }
@@ -144,6 +148,7 @@ class Layer{
      * @param integer $origh
      * @param integer $neww
      * @param integer $newh
+     * @return resourece
      */
     protected function _resize($origw, $origh, $neww, $newh){
         $im            = imagecreatetruecolor($neww, $newh);
@@ -155,6 +160,13 @@ class Layer{
         return $im;
     }
 
+    /**
+     * Physically creates a new image resource for the layer.
+     * @param resource $image
+     * @param integer $width
+     * @param integer $height
+     * @return resourece
+     */
     protected function _createFromSoruce($image, $width, $height){
         $im = imagecreatetruecolor($width, $height);
         imagesavealpha($im, true);

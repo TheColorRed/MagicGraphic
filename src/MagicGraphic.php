@@ -11,6 +11,13 @@ class MagicGraphic{
     const GIF = "gif";
     const PNG = "png";
 
+    /**
+     * Sets up the stage size. If the width or height of the stage isn't given, 
+     * auto sizing then becomes enabled; this means that your stage is set based
+     * on the size of the largest layer (including offsets).
+     * @param integer $width
+     * @param integer $height
+     */
     public function __construct($width = null, $height = null){
         $this->width  = $width;
         $this->height = $height;
@@ -34,6 +41,12 @@ class MagicGraphic{
         return $layer;
     }
 
+    /**
+     * Duplicates an existing layer.
+     * @param string $name
+     * @param resource $resource
+     * @return \Layer
+     */
     public function duplicateLayer($name, $resource){
         $layer          = new Layer();
         $layer->loadFromResource($resource);
@@ -45,6 +58,11 @@ class MagicGraphic{
         return $layer;
     }
 
+    /**
+     * This will generate an image to be displayed within a webpage. The image
+     * does not get saved, use self::save() to save an image to disk.
+     * @param string $type
+     */
     public function display($type = MagicGraphic::JPG){
         $this->createStage();
         $this->createGraphic();
@@ -64,6 +82,10 @@ class MagicGraphic{
         }
     }
 
+    /**
+     * This creates the final image that will be rendered to the screen or to a
+     * file.
+     */
     protected function createGraphic(){
         /**
          * @var $layer Layer
@@ -80,6 +102,11 @@ class MagicGraphic{
         }
     }
 
+    /**
+     * Creates the stage where all the layers will be drawn to. If self::autosize 
+     * is enabled, the stage will be set to size of the largest layer this 
+     * includs the layer's x/y offsets.
+     */
     protected function createStage(){
         $width  = (int)$this->width;
         $height = (int)$this->height;
