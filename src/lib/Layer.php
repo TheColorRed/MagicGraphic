@@ -6,14 +6,26 @@ class Layer{
     protected $x      = 0, $y      = 0;
     protected $width  = 0, $height = 0;
     protected $alpha  = 1;
+    protected $anchor = null;
+
+    // Layer Anchors
+    const AnchorTopLeft     = "AnchorTopLeft";
+    const AnchorTopMid      = "AnchorTopMid";
+    const AnchorTopRight    = "AnchorTopRight";
+    const AnchorMidLeft     = "AnchorMidLeft";
+    const AnchorCenter      = "AnchorCenter";
+    const AnchorMidRight    = "AnchorMidRight";
+    const AnchorBottomLeft  = "AnchorBottomLeft";
+    const AnchorBottomMid   = "AnchorBottomMid";
+    const AnchorBottomRight = "AnchorBottomRight";
 
     /**
      * Loads a file
      * @param string $filename
      */
     public function loadFromFile($filename){
-        $image         = file_get_contents($filename);
-        $this->graphic = $this->createGraphic($image);
+        $image = file_get_contents($filename);
+        $this->createGraphic($image);
     }
 
     /**
@@ -21,7 +33,13 @@ class Layer{
      * @param resource $resource
      */
     public function loadFromResource($resource){
-        $this->graphic = $this->createGraphic($resource);
+        $this->createGraphic($resource);
+    }
+
+    public function loadColor($width, $height, $color){
+        $im            = $this->_createBg($width, $height, $color);
+        $this->graphic = $im;
+        $this->recalcSize();
     }
 
     /**
@@ -73,6 +91,10 @@ class Layer{
         $this->alpha = $amount;
     }
 
+    public function setAnchor($anchor = Layer::AnchorTopLeft){
+        $this->anchor = $anchor;
+    }
+
     /**
      * Gets the X offset of the layer
      * @return integer
@@ -107,6 +129,10 @@ class Layer{
 
     public function getAlpha(){
         return $this->alpha;
+    }
+
+    public function getAnchor(){
+        return $this->anchor;
     }
 
     /**
@@ -157,7 +183,7 @@ class Layer{
     }
 
     public function crop($width, $height, $x = 0, $y = 0){
-        $im = $this->_createTransBg($width, $height);
+        $im            = $this->_createBg($width, $height, null, true);
         imagecopy($im, $this->graphic, 0, 0, $x, $y, $width, $height);
         $this->graphic = $im;
         $this->recalcSize();
@@ -181,7 +207,7 @@ class Layer{
      * @return resourece
      */
     protected function _resize($origw, $origh, $neww, $newh){
-        $im = $this->_createTransBg($neww, $newh);
+        $im = $this->_createBg($neww, $newh, null, true);
         imagecopyresampled($im, $this->graphic, 0, 0, 0, 0, $neww, $newh, $origw, $origh);
 
         $this->graphic = $im;
@@ -201,7 +227,7 @@ class Layer{
      * @return resourece
      */
     protected function _createFromSoruce($image, $width, $height){
-        $im = $this->_createTransBg($width, $height);
+        $im = $this->_createBg($width, $height, null, true);
         imagecopyresampled($im, $image, 0, 0, 0, 0, $width, $height, $width, $height);
 
         $this->graphic = $im;
@@ -221,12 +247,22 @@ class Layer{
         return $im;
     }
 
-    protected function _createTransBg($width, $height){
-        $im          = imagecreatetruecolor($width, $height);
+    protected function _createBg($width, $height, $color = null, $trans = false){
+        $im = imagecreatetruecolor($width, $height);
         imagesavealpha($im, true);
-        $trans_color = imagecolorallocatealpha($im, 0, 0, 0, 127);
-        imagefill($im, 0, 0, $trans_color);
+        if($trans){
+            $color = imagecolorallocatealpha($im, 0, 0, 0, 127);
+        }
+        imagefill($im, 0, 0, $color);
         return $im;
     }
 
+    /*
+      protected function _createBg($width, $height, $color = 0x000000){
+      $im = imagecreatetruecolor($width, $height);
+      imagesavealpha($im, true);
+      imagefill($im, 0, 0, $color);
+      return $im;
+      }
+     */
 }

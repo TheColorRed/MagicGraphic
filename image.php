@@ -24,5 +24,5 @@ $explosion2->rotate(90);
 $explosion2->crop(50, 50, 20, 20);
 
 // Crop the image and display
-$mg->crop(300, 300, 100, 200);
+//$mg->crop(300, 300, 100, 200);
 $mg->display(0, MagicGraphic::PNG);

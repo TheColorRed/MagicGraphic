@@ -11,5 +11,9 @@ and open the template in the editor.
     </head>
     <body>
         <h1>MagicGraphic</h1>
+        <?php
+        require_once __DIR__ . "/src/MagicGraphic.php";
+        echo Color::getColor(0, 0, 0);
+        ?>
     </body>
 </html>
