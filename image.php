@@ -17,5 +17,8 @@ $explosion->setOffset(100, 315);
 $explosion2 = $mg->duplicateLayer("expl2", $explosion->getData());
 $explosion2->setOffset(220, 350);
 $explosion2->rotate(90);
+$explosion2->crop(50, 50, 20, 20);
 
-$mg->display(MagicGraphic::JPG);
+
+$mg->crop(300, 300, 100, 200);
+$mg->display(0, MagicGraphic::PNG);

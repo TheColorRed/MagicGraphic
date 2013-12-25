@@ -5,7 +5,7 @@ class Layer{
     protected $graphic;
     protected $x      = 0, $y      = 0;
     protected $width  = 0, $height = 0;
-    protected $alpha = 1;
+    protected $alpha  = 1;
 
     /**
      * Loads a file
@@ -68,7 +68,7 @@ class Layer{
         $this->setX($x);
         $this->setY($y);
     }
-    
+
     public function setAlpha($amount){
         $this->alpha = $amount;
     }
@@ -104,7 +104,7 @@ class Layer{
     public function getHeight(){
         return $this->height;
     }
-    
+
     public function getAlpha(){
         return $this->alpha;
     }
@@ -144,6 +144,10 @@ class Layer{
         $this->_resize($origw, $origh, $width, $height);
     }
 
+    /**
+     * Rotates image layer
+     * @param int $amount
+     */
     public function rotate($amount){
         $amount        = $amount * -1;
         imagesavealpha($this->graphic, true);
@@ -152,6 +156,17 @@ class Layer{
         $this->recalcSize();
     }
 
+    public function crop($width, $height, $x = 0, $y = 0){
+        $im = $this->_createTransBg($width, $height);
+        imagecopy($im, $this->graphic, 0, 0, $x, $y, $width, $height);
+        $this->graphic = $im;
+        $this->recalcSize();
+        return $im;
+    }
+
+    /**
+     * Recalculates the image's size
+     */
     public function recalcSize(){
         $this->width  = imagesx($this->graphic);
         $this->height = imagesy($this->graphic);
@@ -166,16 +181,14 @@ class Layer{
      * @return resourece
      */
     protected function _resize($origw, $origh, $neww, $newh){
-        $im            = imagecreatetruecolor($neww, $newh);
-        imagesavealpha($im, true);
-        $trans_color   = imagecolorallocatealpha($im, 0, 0, 0, 127);
-        imagefill($im, 0, 0, $trans_color);
+        $im = $this->_createTransBg($neww, $newh);
         imagecopyresampled($im, $this->graphic, 0, 0, 0, 0, $neww, $newh, $origw, $origh);
+
         $this->graphic = $im;
         $this->recalcSize();
         return $im;
     }
-    
+
     protected function _alpha(){
         
     }
@@ -188,11 +201,7 @@ class Layer{
      * @return resourece
      */
     protected function _createFromSoruce($image, $width, $height){
-        $im = imagecreatetruecolor($width, $height);
-        imagesavealpha($im, true);
-
-        $trans_color = imagecolorallocatealpha($im, 0, 0, 0, 127);
-        imagefill($im, 0, 0, $trans_color);
+        $im = $this->_createTransBg($width, $height);
         imagecopyresampled($im, $image, 0, 0, 0, 0, $width, $height, $width, $height);
 
         $this->graphic = $im;
@@ -209,6 +218,14 @@ class Layer{
         $im            = imagecreatefromstring($string);
         $this->graphic = $im;
         $this->recalcSize();
+        return $im;
+    }
+
+    protected function _createTransBg($width, $height){
+        $im          = imagecreatetruecolor($width, $height);
+        imagesavealpha($im, true);
+        $trans_color = imagecolorallocatealpha($im, 0, 0, 0, 127);
+        imagefill($im, 0, 0, $trans_color);
         return $im;
     }
 

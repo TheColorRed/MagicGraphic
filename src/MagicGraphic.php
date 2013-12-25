@@ -3,9 +3,12 @@
 class MagicGraphic{
 
     protected $stage;
-    protected $layers   = [];
-    protected $width    = null, $height   = null;
-    protected $autosize = false;
+    protected $layers        = [];
+    protected $width         = null, $height        = null;
+    protected $autosize      = false;
+    protected $stageSettings = [
+        "crop" => []
+    ];
 
     const JPG = "jpg";
     const GIF = "gif";
@@ -58,26 +61,52 @@ class MagicGraphic{
         return $layer;
     }
 
+    public function crop($width, $height, $x = 0, $y = 0){
+        $this->stageSettings["crop"]["width"]  = $width;
+        $this->stageSettings["crop"]["height"] = $height;
+        $this->stageSettings["crop"]["x"]      = $x;
+        $this->stageSettings["crop"]["y"]      = $y;
+    }
+
     /**
      * This will generate an image to be displayed within a webpage. The image
      * does not get saved, use self::save() to save an image to disk.
      * @param string $type
      */
-    public function display($type = MagicGraphic::JPG){
+    public function display($quality = 100, $type = MagicGraphic::JPG){
         $this->createStage();
         $this->createGraphic();
+        $this->_genImageType($type, null, (int)$quality);
+    }
+
+    public function save($filename, $quality = 100, $type = MagicGraphic::JPG){
+        $this->createStage();
+        $this->createGraphic();
+        $this->_genImageType($type, $filename, (int)$quality);
+    }
+
+    /**
+     * Recalculates the image's size
+     */
+    public function recalcSize(){
+        $this->width  = imagesx($this->graphic);
+        $this->height = imagesy($this->graphic);
+    }
+    
+    protected function _genImageType($type, $filename, $quality){
         switch($type){
             case MagicGraphic::JPG:
-                imagejpeg($this->stage, null, 100);
+                imagejpeg($this->stage, $filename, $quality);
                 break;
             case MagicGraphic::GIF:
-                imagegif($this->stage);
+                imagegif($this->stage, $filename);
                 break;
             case MagicGraphic::PNG:
-                imagepng($this->stage, null, 9);
+                $quality = round(($quality / 100) * 9);
+                imagepng($this->stage, $filename, $quality);
                 break;
             default:
-                imagejpeg($this->stage, null, 100);
+                imagejpeg($this->stage, $filename, $quality);
                 break;
         }
     }
@@ -100,6 +129,7 @@ class MagicGraphic{
             $y       = $layer->getY();
             imagecopy($this->stage, $graphic, $x, $y, 0, 0, $width, $height);
         }
+        $this->_stageFinalize();
     }
 
     /**
@@ -129,10 +159,33 @@ class MagicGraphic{
                 }
             }
         }
-        $this->stage = imagecreatetruecolor($width, $height);
-        imagesavealpha($this->stage, true);
-        $trans_color = imagecolorallocatealpha($this->stage, 0, 0, 0, 127);
-        imagefill($this->stage, 0, 0, $trans_color);
+        $this->stage = $this->_createTransBg($width, $height);
+    }
+
+    protected function _stageFinalize(){
+        $this->_crop();
+    }
+
+    protected function _createTransBg($width, $height){
+        $im          = imagecreatetruecolor($width, $height);
+        imagesavealpha($im, true);
+        $trans_color = imagecolorallocatealpha($im, 0, 0, 0, 127);
+        imagefill($im, 0, 0, $trans_color);
+        return $im;
+    }
+
+    protected function _crop(){
+        if(empty($this->stageSettings["crop"])){
+            return;
+        }
+        $width  = (int)$this->stageSettings["crop"]["width"];
+        $height = (int)$this->stageSettings["crop"]["height"];
+        $x      = (int)$this->stageSettings["crop"]["x"];
+        $y      = (int)$this->stageSettings["crop"]["y"];
+        $im     = $this->_createTransBg($width, $height);
+        imagecopy($im, $this->stage, 0, 0, $x, $y, $width, $height);
+        $this->stage = $im;
+        $this->recalcSize();
     }
 
 }
