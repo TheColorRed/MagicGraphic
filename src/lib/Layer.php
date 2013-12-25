@@ -3,9 +3,9 @@
 class Layer{
 
     protected $graphic;
-    protected $depth;
     protected $x      = 0, $y      = 0;
     protected $width  = 0, $height = 0;
+    protected $alpha = 1;
 
     /**
      * Loads a file
@@ -68,6 +68,10 @@ class Layer{
         $this->setX($x);
         $this->setY($y);
     }
+    
+    public function setAlpha($amount){
+        $this->alpha = $amount;
+    }
 
     /**
      * Gets the X offset of the layer
@@ -99,6 +103,10 @@ class Layer{
      */
     public function getHeight(){
         return $this->height;
+    }
+    
+    public function getAlpha(){
+        return $this->alpha;
     }
 
     /**
@@ -167,6 +175,10 @@ class Layer{
         $this->recalcSize();
         return $im;
     }
+    
+    protected function _alpha(){
+        
+    }
 
     /**
      * Physically creates a new image resource for the layer.
@@ -187,14 +199,14 @@ class Layer{
         $this->recalcSize();
         return $im;
     }
-    
+
     /**
      * Creates an image from a string such as file_get_contents()
      * @param string $string
      * @return resource
      */
     protected function _createFromString($string){
-        $im = imagecreatefromstring($string);
+        $im            = imagecreatefromstring($string);
         $this->graphic = $im;
         $this->recalcSize();
         return $im;
