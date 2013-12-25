@@ -89,8 +89,8 @@ class MagicGraphic{
      * Recalculates the image's size
      */
     public function recalcSize(){
-        $this->width  = imagesx($this->graphic);
-        $this->height = imagesy($this->graphic);
+        $this->width  = imagesx($this->stage);
+        $this->height = imagesy($this->stage);
     }
     
     protected function _genImageType($type, $filename, $quality){

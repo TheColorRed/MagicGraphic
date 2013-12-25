@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "/src/MagicGraphic.php";
-header("content-type: image/jpeg");
+//header("content-type: image/jpeg");
 
 $mg = new MagicGraphic();
 
