@@ -18,7 +18,7 @@ $explosion->autoResizeWidth(150);
 $explosion->setOffset(100, 315);
 
 // Duplicate layer 2
-$explosion2 = $mg->duplicateLayer("expl2", $explosion->getData());
+$explosion2 = $mg->duplicateLayer($explosion, "expl2");
 $explosion2->setOffset(220, 350);
 $explosion2->rotate(90);
 $explosion2->crop(50, 50, 20, 20);

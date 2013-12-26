@@ -44,8 +44,7 @@ class MagicGraphic{
         return $layer;
     }
 
-    public function anchorLayer($layer, $anchor){
-        /* @var $layer Layer */
+    public function anchorLayer(Layer $layer, $anchor){
         $layer->setAnchor($anchor);
     }
 
@@ -55,9 +54,9 @@ class MagicGraphic{
      * @param resource $resource
      * @return \Layer
      */
-    public function duplicateLayer($name, $resource){
+    public function duplicateLayer(Layer $layer, $name){
         $layer          = new Layer();
-        $layer->loadFromResource($resource);
+        $layer->loadFromResource($layer->getData());
         $li             = new LayerInfo();
         $li->depth      = count($this->layers);
         $li->name       = $name;
