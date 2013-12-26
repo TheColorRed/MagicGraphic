@@ -55,14 +55,14 @@ class MagicGraphic{
      * @return \Layer
      */
     public function duplicateLayer(Layer $layer, $name){
-        $layer          = new Layer();
-        $layer->loadFromResource($layer->getData());
+        $l          = new Layer();
+        $l->loadFromResource($layer->getData());
         $li             = new LayerInfo();
         $li->depth      = count($this->layers);
         $li->name       = $name;
-        $li->resource   = $layer;
+        $li->resource   = $l;
         $this->layers[] = $li;
-        return $layer;
+        return $l;
     }
 
     public function crop($width, $height, $x = 0, $y = 0){
