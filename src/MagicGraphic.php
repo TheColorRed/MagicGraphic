@@ -55,7 +55,7 @@ class MagicGraphic{
      * @return \Layer
      */
     public function duplicateLayer(Layer $layer, $name){
-        $l          = new Layer();
+        $l              = new Layer();
         $l->loadFromResource($layer->getData());
         $li             = new LayerInfo();
         $li->depth      = count($this->layers);
@@ -77,13 +77,13 @@ class MagicGraphic{
      * does not get saved, use self::save() to save an image to disk.
      * @param string $type
      */
-    public function display($quality = 100, $type = MagicGraphic::JPG){
+    public function display($quality = 100, $type = MagicGraphic::PNG){
         $this->_createStage();
         $this->_createGraphic();
         $this->_genImageType($type, null, (int)$quality);
     }
 
-    public function save($filename, $quality = 100, $type = MagicGraphic::JPG){
+    public function save($filename, $quality = 100, $type = MagicGraphic::PNG){
         $this->_createStage();
         $this->_createGraphic();
         $this->_genImageType($type, $filename, (int)$quality);
