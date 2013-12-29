@@ -25,7 +25,7 @@ class Layer{
      */
     public function loadFromFile($filename){
         $image = file_get_contents($filename);
-        $this->createGraphic($image);
+        $this->_createGraphic($image);
     }
 
     /**
@@ -33,7 +33,7 @@ class Layer{
      * @param resource $resource
      */
     public function loadFromResource($resource){
-        $this->createGraphic($resource);
+        $this->_createGraphic($resource);
     }
 
     public function loadColor($width, $height, $color){
@@ -55,7 +55,7 @@ class Layer{
      * @param string $image
      * @return resource
      */
-    protected function createGraphic($image){
+    protected function _createGraphic($image){
         if(is_string($image)){
             $im = $this->_createFromString($image);
         }elseif(is_resource($image)){

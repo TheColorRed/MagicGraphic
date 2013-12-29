@@ -34,16 +34,32 @@ class MagicGraphic{
      * @param string $name
      * @return Layer
      */
-    public function createLayer($name){
+    public function createLayer(){
         $layer          = new Layer();
         $li             = new LayerInfo();
         $li->depth      = count($this->layers);
-        $li->name       = $name;
         $li->resource   = $layer;
         $this->layers[] = $li;
         return $layer;
     }
+    
+    /**
+     * Creates a layer From a Filename
+     * @param String $name
+     * @param String $filename
+     * @return Layer
+     */
+    public function createLayerFromFile($filename){
+        $layer = $this->createLayer();
+        $layer->loadFromFile($filename);
+        return $layer;
+    }
 
+    /**
+     * Anchors a layer to the edge of the image
+     * @param Layer $layer
+     * @param String $anchor
+     */
     public function anchorLayer(Layer $layer, $anchor){
         $layer->setAnchor($anchor);
     }
@@ -54,12 +70,11 @@ class MagicGraphic{
      * @param resource $resource
      * @return \Layer
      */
-    public function duplicateLayer(Layer $layer, $name){
+    public function duplicateLayer(Layer $layer){
         $l              = new Layer();
         $l->loadFromResource($layer->getData());
         $li             = new LayerInfo();
         $li->depth      = count($this->layers);
-        $li->name       = $name;
         $li->resource   = $l;
         $this->layers[] = $li;
         return $l;
@@ -251,7 +266,6 @@ class LayerInfo{
 
     public $resource;
     public $depth;
-    public $name;
 
 }
 
